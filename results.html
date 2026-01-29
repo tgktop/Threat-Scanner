@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Scan Results - {{ filename }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-lg">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h3><i class="fas fa-chart-line me-2 text-danger"></i>Scan Complete</h3>
+                <span class="badge bg-{% if total == 0 %}success{% else %}danger{% endif %} fs-6">
+                    {{ total }} Findings
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h4 class="text-primary">{{ filename }}</h4>
+                                <p class="mb-1"><small>{{ total }} threats detected</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if total == 0 %}
+                <div class="alert alert-success border-0">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Clean File!</strong> No threats detected. File appears secure.
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>{{ total }} Security Issues Found</strong> - Review findings below
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Threat</th>
+                                <th>Severity</th>
+                                <th>Location</th>
+                                <th>Issue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for finding in findings %}
+                            <tr class="table-{% if finding.severity == 'CRITICAL' %}danger
+                                              {% elif finding.severity == 'HIGH' %}warning
+                                              {% elif finding.severity == 'MEDIUM' %}info
+                                              {% else %}secondary{% endif %}">
+                                <td>
+                                    <i class="fas fa-{% if finding.severity == 'CRITICAL' %}skull-crossbones
+                                        {% elif finding.severity == 'HIGH' %}exclamation-triangle
+                                        {% elif finding.severity == 'MEDIUM' %}exclamation-circle
+                                        {% else %}info-circle{% endif %} me-1 text-{% if finding.severity == 'CRITICAL' %}danger
+                                        {% elif finding.severity == 'HIGH' %}warning
+                                        {% elif finding.severity == 'MEDIUM' %}info
+                                        {% else %}secondary{% endif %}"></i>
+                                    {{ finding.threat }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if finding.severity == 'CRITICAL' %}danger
+                                        {% elif finding.severity == 'HIGH' %}warning
+                                        {% elif finding.severity == 'MEDIUM' %}info
+                                        {% else %}secondary{% endif %}">
+                                        {{ finding.severity }}
+                                    </span>
+                                </td>
+                                <td>{{ finding.location|default('N/A') }}</td>
+                                <td>{{ finding.issue }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6><i class="fas fa-chart-pie me-2"></i>Severity Breakdown</h6>
+                                <ul class="list-unstyled">
+                                    {% for sev, count in severity_count.items() %}
+                                    <li><strong>{{ sev }}:</strong> {{ count }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>Scan took: {{ scan_time|round(2) }}s</h6>
+                                <a href="{{ url_for('upload') }}" class="btn btn-primary">
+                                    <i class="fas fa-upload me-1"></i>Scan Another File
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

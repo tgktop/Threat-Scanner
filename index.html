@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Upload File - Threat Scanner{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body text-center p-5">
+                <h1 class="display-4 fw-bold text-primary mb-4">
+                    <i class="fas fa-file-upload"></i> Threat Scanner
+                </h1>
+                <p class="lead">Upload any file to scan for security threats</p>
+                <form method="POST" action="/scan" enctype="multipart/form-data" class="mt-4">
+                    <div class="mb-4">
+                        <input type="file" class="form-control form-control-lg" name="file" required>
+                        <small class="text-muted">Supports code files up to 16MB</small>
+                    </div>
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="fas fa-bolt me-2"></i>Run Security Scan
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
